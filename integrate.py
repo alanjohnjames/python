@@ -1,6 +1,6 @@
-###
-### module integrate.py
-###
+""" integrate.py """
+
+#%%
 import numpy as np
 import scipy.integrate
 
@@ -16,9 +16,9 @@ def index(val, arr):
     """ See: https://philbull.wordpress.com/2012/01/11/numpy-tip-getting-index-of-an-array-element-nearest-to-some-value/"""
     return (np.abs(arr - val)).argmin()
 
-print index(x, 0.75) 
+print("index = {}".format(str(index(x, 0.75))))
 
 x_int = []
 
-### Code change...
+print("Finished...")
 
