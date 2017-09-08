@@ -2,5 +2,5 @@
     // Whether to lint Python files.
     "python.linting.pylintEnabled": false,
     // Path to Python, you can use a custom version of Python by modifying this setting to include the full path.
-    "python.pythonPath": "/Users/alan/Documents/anaconda/bin/python"
+    "python.pythonPath": "/Users/alan/Documents/anaconda/envs/alan_venv/bin/python"
 }
