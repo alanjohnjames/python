@@ -6,8 +6,9 @@
     http://stupidpythonideas.blogspot.co.uk/2014/08/adts-for-python.html 
 
     Kris Nuttycombe (17 August, 2016 15:36)
-    I know it's ugly as hell, but I get by by encoding my sum type values in terms of their catamorphism.
-    Then, at least, "pattern matching" on them is just a function call.
+    ``I know it's ugly as hell, but I get by by encoding my sum type values in terms of their catamorphism.
+      Then, at least, "pattern matching" on them is just a function call.``
+
     Here's an example below...
 """
 
