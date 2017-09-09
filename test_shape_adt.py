@@ -5,15 +5,25 @@
     Pattern matching with union types
     https://swlaschin.gitbooks.io/fsharpforfunandprofit/content/posts/key-concepts.html
 
-    Fsharp example... define a "union" of alternative structures
+    In the following example, we create a Shape type
+    representing four different shapes and 
+    then define a draw function with different behavior
+    for each kind of shape.
+    
+    This is similar to polymorphism in an object oriented language,
+    but based on functions.
+"""
+
+# %%
+""" Define a "union" of alternative structures
+
     type Shape =
-    | Circle of int
+    | Circle of int 
     | Rectangle of int * int
     | Polygon of (int * int) list
     | Point of (int * int)
 """
 
-# %%
 # shape_type = (if_circle, if_rectangle, if_polygon, if_point)
 
 def circle(radius):
@@ -29,11 +39,35 @@ def point(x, y):
     return lambda if_circle, if_rectangle, if_polygon, if_point: if_point(x, y)
 
 
+# %%
+""" Define a function "draw" with a shape param
+
+    let draw shape =
+        match shape with
+            | Circle radius -> 
+                printfn "The circle has a radius of %d" radius
+            | Rectangle (height,width) -> 
+                printfn "The rectangle is %d high by %d wide" height width
+            | Polygon points -> 
+                printfn "The polygon is made of these points %A" points
+            | _ -> printfn "I don't recognize this shape"
+"""
+
 # type printShape = Shape -> String
 def print_shape(shape):
     return shape(
         if_circle = lambda radius: "radius: {0}".format(str(radius)), 
         if_rectangle = lambda width, length: "width: {0}, length: {1}".format(str(width), str(length)),
         if_polygon = lambda list_of_points: ["x: {0}, y: {1}".format(str(x), str(y)) for p in list_of_points])
+
+# %%
+"""
+    let circle = Circle(10)
+    let rect = Rectangle(4,5)
+    let polygon = Polygon( [(1,1); (2,2); (3,3)])
+    let point = Point(2,3)
+
+    [circle; rect; polygon; point] |> List.iter draw
+"""
 
 print("Finished...")
