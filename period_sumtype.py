@@ -6,29 +6,13 @@
 
 # %%
 import attr
+from datetime import date
 from sumtypes import sumtype, constructor, match
 
 @sumtype
 class PeriodSumtype(object):
     DurationPeriod = constructor('start_date', 'duration')
     DatePeriod = constructor('end_date', 'start_date')
-
-@sumtype
-class PeriodAttrtype(object):
-    DurationPeriod = constructor(
-        start_date = attr.ib(validator=attr.validators.instance_of(date)),
-        duration = attr.ib(validator=attr.validators.instance_of(str)))
-    DatePeriod = constructor(
-        start_date = attr.ib(validator=attr.validators.instance_of(date)),
-        end_date = attr.ib(validator=attr.validators.instance_of(date)))
-
-@sumtype
-class Period(object):
-    Sumtype = constructor(
-        sum_type = attr.ib(validator=attr.validators.instance_of(PeriodSumtype)))
-    Attrtype = constructor(
-        attr_type = attr.ib(validator=attr.validators.instance_of(date)))
-
 
 # type durationPeriod = end_date * duration
 # type datePeriod = end_date * start_date
@@ -53,3 +37,21 @@ print("DurationPeriod:\n{}".format(print_period(PeriodSumtype.DurationPeriod(sta
 print("DatePeriod:\n{}".format(print_period(PeriodSumtype.DatePeriod(start, end))))
 
 print("Finished...")
+
+# %%
+
+@sumtype
+class PeriodAttrtype(object):
+    DurationPeriod = constructor(
+        start_date = attr.ib(validator=attr.validators.instance_of(date)),
+        duration = attr.ib(validator=attr.validators.instance_of(str)))
+    DatePeriod = constructor(
+        start_date = attr.ib(validator=attr.validators.instance_of(date)),
+        end_date = attr.ib(validator=attr.validators.instance_of(date)))
+
+@sumtype
+class Period(object):
+    Sumtype = constructor(
+        sum_type = attr.ib(validator=attr.validators.instance_of(PeriodSumtype)))
+    Attrtype = constructor(
+        attr_type = attr.ib(validator=attr.validators.instance_of(PeriodAttrtype)))
