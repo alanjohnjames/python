@@ -55,3 +55,23 @@ class Period(object):
         sum_type = attr.ib(validator=attr.validators.instance_of(PeriodSumtype)))
     Attrtype = constructor(
         attr_type = attr.ib(validator=attr.validators.instance_of(PeriodAttrtype)))
+
+# type matchPeriod = Period -> Period
+@match(Period)
+class match_period(object):
+    def Sumtype(sum_type): return sum_type
+    def Attrtype(attr_type): return attr_type
+
+sum_dur = PeriodSumtype.DurationPeriod(start, duration)
+sum_dat = PeriodSumtype.DatePeriod(start, end)
+
+att_dur = PeriodAttrtype.DurationPeriod(start, duration)
+att_dat = PeriodAttrtype.DatePeriod(start, end)
+
+sum = Period.Sumtype(sum_dat)
+att = Period.Attrtype(att_dat)
+
+print("Sum: {}".format(match_period(sum)))
+print("Attr: {}".format(match_period(att)))
+
+print("Finished...")
