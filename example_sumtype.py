@@ -5,9 +5,11 @@
 """
 
 # %%
-""" Decorate your classes to make them a sum type: """
-
+import attr
 from sumtypes import sumtype, constructor, match
+
+# %%
+""" Decorate your classes to make them a sum type: """
 
 @sumtype
 class MyType(object):
@@ -18,9 +20,10 @@ class MyType(object):
     # You can also make use of any feature of the attrs
     # package by using attr.ib in constructors
     ThirdConstructor = constructor(
-        # one=attr.ib(default=42),  # ValueError: No mandatory attributes allowed after an attribute with a default value or factory
-        two = attr.ib(validator=attr.validators.instance_of(int)),
-        one = attr.ib(default=42))
+        # one=attr.ib(default=42),
+        # ValueError: No mandatory attributes allowed after an attribute with a default value or factory
+        two=attr.ib(validator=attr.validators.instance_of(int)),
+        one=attr.ib(default=42))
 
 """ Then construct them by calling the constructors: """
 v = MyType.MyConstructor(1)
@@ -45,8 +48,11 @@ assert v != MyType.MyConstructor(2)
 
 """ Simple pattern matching is also supported.
     To write a function over all the cases of a sum type: """
+
+
 @match(MyType)
 class get_number(object):
+    """ Get the number from `MyType` """
     def MyConstructor(x): return x
     def AnotherConstructor(x, y): return y
     def ThirdConstructor(one, two): return one + two
@@ -57,13 +63,17 @@ class get_number(object):
 assert get_number(v) == 1
 assert get_number(v2) == 2
 
+
 @sumtype
 class MyType(object):
+    """ Name and Number """
     NamedNum = constructor('name', 'num')
     AnonymousNum = constructor('num')
 
+
 @match(MyType)
 class get_num(object):
+    """ Pattern match on `MyType` """
     def NamedNum(_, num): return num
     def AnonymousNum(num): return num
 
