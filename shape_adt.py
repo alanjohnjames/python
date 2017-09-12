@@ -6,19 +6,19 @@
     https://swlaschin.gitbooks.io/fsharpforfunandprofit/content/posts/key-concepts.html
 
     In the following example, we create a Shape type
-    representing four different shapes and 
+    representing four different shapes and
     then define a draw function with different behavior
     for each kind of shape.
-    
+
     This is similar to polymorphism in an object oriented language,
     but based on functions.
 """
 
-# %%
+# %%
 """ Define a "union" of alternative structures
 
     type Shape =
-    | Circle of int 
+    | Circle of int
     | Rectangle of int * int
     | Polygon of (int * int) list
     | Point of (int * int)
@@ -44,11 +44,11 @@ def point(x, y):
 
     let draw shape =
         match shape with
-            | Circle radius -> 
+            | Circle radius ->
                 printfn "The circle has a radius of %d" radius
-            | Rectangle (height,width) -> 
+            | Rectangle (height,width) ->
                 printfn "The rectangle is %d high by %d wide" height width
-            | Polygon points -> 
+            | Polygon points ->
                 printfn "The polygon is made of these points %A" points
             | _ -> printfn "I don't recognize this shape"
 """
