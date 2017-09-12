@@ -56,9 +56,9 @@ def point(x, y):
 # type printShape = Shape -> String
 def print_shape(shape):
     return shape(
-        if_polygon = lambda list_of_points: ["x: {0}, y: {1}".format(str(x), str(y)) for p in list_of_points])
         if_circle=lambda radius: "radius: {0}".format(str(radius)),
         if_rectangle=lambda width, length: "width: {0}, length: {1}".format(str(width), str(length)),
+        if_polygon=lambda list_of_points: ["point: {0}".format(str(print_shape(point))) for point in list_of_points],
         if_point=lambda x, y: "x: {0}, y: {1}".format(str(x), str(y)))
 
 # %%
