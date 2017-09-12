@@ -71,4 +71,14 @@ def print_shape(shape):
     [circle; rect; polygon; point] |> List.iter draw
 """
 
+cir = circle(1.0)
+rec = rectangle(1.0, 2.0)
+pol = polygon([point(3.0, 4.0), point(5.0, 6.0), cir, rec])
+pnt = point(7.0, 8.0)
+
+shapes = [cir, rec, pol, pnt]
+
+for s in shapes:
+    print(print_shape(s))
+
 print("Finished...")
