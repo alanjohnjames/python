@@ -36,7 +36,7 @@ dur = PeriodTest(date(2017, 9, 11), "1Y")
 print("Dur: {}".format(dur))
 
 
-# %%
+# %%
 @attr.s
 class DurationPeriod(object):
     start_date = attr.ib(validator=attr.validators.instance_of(date))

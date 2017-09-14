@@ -10,6 +10,7 @@ from sumtypes import sumtype, constructor, match
 
 import attr
 
+# PeriodSumtype
 
 @sumtype
 class PeriodSumtype(object):
@@ -44,6 +45,9 @@ print("Finished...")
 
 
 # %%
+
+# PeriodAttrtype
+
 @sumtype
 class PeriodAttrtype(object):
     DurationPeriod = constructor(
@@ -53,12 +57,16 @@ class PeriodAttrtype(object):
         start_date=attr.ib(validator=attr.validators.instance_of(date)),
         end_date=attr.ib(validator=attr.validators.instance_of(date)))
 
+# Period Implementation
+
 @sumtype
 class Implementation(object):
     Sumtype = constructor(
-        sum_type=attr.ib(validator=attr.validators.instance_of(PeriodSumtype)))
+        sum_type=attr.ib(validator=attr.validators.instance_of(PeriodSumtype)) )  #,
+#        impl=attr.ib(validator=attr.validators.instance_of(str)))
     Attrtype = constructor(
-        attr_type=attr.ib(validator=attr.validators.instance_of(PeriodAttrtype)))
+        attr_type=attr.ib(validator=attr.validators.instance_of(PeriodAttrtype)) )  #,
+#        impl=attr.ib(validator=attr.validators.instance_of(str)))
 
 
 # type matchPeriod = Period -> Period
@@ -73,10 +81,25 @@ sum_dat = PeriodSumtype.DatePeriod(start, end)
 att_dur = PeriodAttrtype.DurationPeriod(start, duration)
 att_dat = PeriodAttrtype.DatePeriod(start, end)
 
-sum_type = Implementation.Sumtype(sum_dat)
-attr_type = Implementation.Attrtype(att_dat)
+sum_type = Implementation.Sumtype(sum_dat)  # , "Impl is Sumtype")
+attr_type = Implementation.Attrtype(att_dat)  #, "Imple is Attrtype")
 
-print("Sumtype: {}".format(match_impl(sum_type)))
-print("Attrtype: {}".format(match_impl(attr_type)))
+print("Sumtype: {}".format(sum_type))
+print("Attrtype: {}".format(attr_type))
+
+print("match_impl: {}".format(match_impl(sum_type)))
+print("match_impl: {}".format(match_impl(attr_type)))
+
+print("print_period: {}".format(print_period(match_impl(sum_type))))
+print("print_period: {}".format(print_period(match_impl(attr_type))))
+
+print("Finished...")
+
+
+# %%
+from toolz import compose
+
+print_type = compose(match_impl, print_period)
+# print("print_type: {}".format(print_type(sum_type)))
 
 print("Finished...")

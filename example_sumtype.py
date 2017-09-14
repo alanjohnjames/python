@@ -63,7 +63,12 @@ class get_number(object):
 assert get_number(v) == 1
 assert get_number(v2) == 2
 
+print(get_number(v) == 1)
+print(get_number(v2) == 2)
 
+# %%
+""" Decorate your classes to make them a sum type: """
+# Another example...
 @sumtype
 class MyType(object):
     """ Name and Number """
