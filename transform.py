@@ -26,17 +26,47 @@ class transform(object):
         return int(s)
 
 
-def test_transform():
+@sumtype
+class Int_Or_String(object):
+    Int = constructor(
+        i=attr.ib(validator=attr.validators.instance_of(int)))
+    String = constructor(
+        s=attr.ib(validator=attr.validators.instance_of(str)))
 
+
+@match(Int_Or_String)
+class convert(object):
+    def Int(i): return str(i)
+    def String(s): return int(s)
+
+
+def test_transform():
+    """ Test... transform """
     i_to_s = Transform.Int_To_String(1, "")
     s_to_i = Transform.String_To_Int("2", 0)
 
-    s = transform(i_to_s)
-    i = transform(s_to_i)
+    p = transform(i_to_s)
+    q = transform(s_to_i)
+
+    print("transform: p = {}".format(p))
+    print("transform: q = {}".format(q))
+
+
+def test_convert():
+    """ Test... convert """
+    i = Int_Or_String.Int(3)
+    s = Int_Or_String.String("5")
+
+    p = convert(i)
+    q = convert(s)
+
+    print("convert: p = {}".format(p))
+    print("convert: q = {}".format(q))
 
 
 if __name__ == '__main__':
 
     test_transform()
+    test_convert()
 
     print("Finished...")
