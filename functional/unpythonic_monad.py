@@ -49,3 +49,69 @@ def test_perhaps():
     street = get_street_from_company(company)
 
     print("street = {}".format(street))
+
+
+#
+# 
+#
+
+import re
+from functools import reduce
+
+# Unit: Our "wrapper" function
+def validated_data(data, errors=None):
+    """Wrap <data> up in a dict with any <errors> provided"""
+    return {
+        'data': data,
+        'errors': errors or {}
+    }
+
+
+# Bind: Apply a function to a "wrapped" value
+def bind_validated_data(vd, fn):
+    """ Apply each validator, using its returned data and merging any errors """
+    result = fn(vd['data'])
+    return {
+        'data': result['data'],
+        'errors': dict(vd['errors'], **result['errors'])
+    }
+
+
+# Usage: Functions that accept unwrapped values and return wrapped ones.
+
+def validate_name(data):
+    if not data.get('name'):
+        return validated_data(data, {'name': 'No name found'})
+    return validated_data(data)
+
+
+def clean_phone(data):
+    """ Replace all non-numeric characters in the phone field """
+    phone = data.get('phone')
+    if phone:
+        data['phone'] = re.sub(r'[^0-9]', '', phone)
+        return validated_data(data)
+    return validated_data(data, {'phone': 'Please provide a phone number'})
+
+
+def validate(data):
+    # Take note! This is a handy way to thread data through functions.
+    return reduce(
+        bind_validated_data,
+        [validate_name, clean_phone],
+        data)
+
+
+def test_validated_data():
+
+    data = {
+        'data': {
+            'name': 'First Second',
+            'phone': '+123-456-789'
+        },
+        'errors': {}
+    }
+
+    valid_data = validate(data)
+
+    print("Valid data = {}".format(valid_data))
