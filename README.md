@@ -1,3 +1,3 @@
 # python playground
 
-Repository containing my python code
+Repository containing my experiments in python code
