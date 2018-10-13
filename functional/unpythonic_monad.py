@@ -4,7 +4,7 @@ Unpythonic
 
 https://unpythonic.com/01_06_monads/
 
-Code examples tsken from `unpythonic.com`
+Code examples taken from `unpythonic.com`
 
 """
 
