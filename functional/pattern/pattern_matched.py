@@ -1,5 +1,6 @@
 """
 Pattern | Matched
+
 Some things with mypy: sum and product types
 
 http://averagehat.github.io/posts/types.html
