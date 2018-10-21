@@ -9,6 +9,8 @@ https://www.stephanboyer.com/post/9/monads-part-1-a-design-pattern
 
 # NOTE: Example 1: exception handling (a.k.a. “Maybe”)
 
+class Maybe: pass
+
 def divide100(divisor):
     if divisor == 0:
         return None
@@ -88,6 +90,8 @@ print(c)
 
 # NOTE: Example 2: vector operations (a.k.a. “List”)
 
+class List: pass
+
 # We know that, mathematically, positive numbers have two square roots.
 # Let’s modify sqrt to return a list of values:
 
@@ -141,6 +145,8 @@ print(r)
 
 # NOTE: Example 3: debug output (a.k.a. “Writer”)
 
+class Writer: pass
+
 # Suppose we have some functions u and v, and each function takes a number and returns a number
 
 def u(x): 
@@ -188,12 +194,11 @@ print(r)
 
 # Still works! We’ve just implemented Haskell’s Writer monad!
 
-# NOTE: The pattern
+# TODO: The pattern
 
 
+# TODO: Monad axioms
 
-# NOTE: Monad axioms
 
-
-# NOTE: But what about side effects?
+# TODO: But what about side effects?
 
