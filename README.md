@@ -2,9 +2,9 @@
 
 Repository containing my experiments in python code
 
-## Contents
+## Contents
 
-### Functional / Algebraic Data Types
+### Functional / Algebraic Data Types
 
 * Python Algebraic Data Types (ADTs)
 
@@ -17,7 +17,7 @@ Repository containing my experiments in python code
     <iframe src="https://stupidpythonideas.blogspot.co.uk/2014/08/adts-for-python.html" height="500" width="500"></iframe>
 
 
-### Monads
+### Functional / Monads
 
 * Code happens
 
@@ -63,7 +63,7 @@ Repository containing my experiments in python code
 
     http://www.valuedlessons.com/2008/01/monads-in-python-with-nice-syntax.html
 
-### Pattern Matching
+### Functional / Pattern Matching
 
 * Metaprogramming Beyond Decency: Part 1
 
