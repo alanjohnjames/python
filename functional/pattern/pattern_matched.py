@@ -25,26 +25,26 @@ y = point[1]  # this typechecks, it probably shouldn't
 
 # NOTE: mypy knows how long the tuple is
 
-r = point[99]
+# r = point[99]
 # foo.py:10: error: Tuple index out of range
 
 # NOTE: mypy enforces the safety of common operators
 # This avoids meaningless comparisons...
 
-"foo" > sys.maxsize is True
+# "foo" > sys.maxsize is True
 # True # sure, why not?
 
-point.x + "Eureka"
+# point.x + "Eureka"
 # foo.py:10: error: Unsupported operand types for + ("float" and "str")
 
 x = point.x  # mypy infers the type after assignment
 
-x > "Eureka" is True
+# x > "Eureka" is True
 # foo.py:10: error: Unsupported operand types for > ("float" and "str")
 
 # NOTE: mypy limits attribute access
 
-sneaky = point.gecko
+# sneaky = point.gecko
 # foo.py:13: error: "Point3D" has no attribute "gecko"
 
 

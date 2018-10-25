@@ -61,15 +61,17 @@ def execute(computation):
         print(computation.data[0])
         return None
 
-main = output('Hello, World!')
+def test_output():
 
-# What is main? Let’s find out:
+    main = output('Hello, World!')
 
-print(main)
-assert main.__repr__() == """Computation(Computation.OUTPUT, ['Hello, World!'])"""
+    # What is main? Let’s find out:
+    print(main)
 
-execute(main)
-"Hello, World!"
+    execute(main)
+    "Hello, World!"
+
+    assert main.__repr__() == """Computation(Computation.OUTPUT, ['Hello, World!'])"""
 
 
 # NOTE: More advanced examples
@@ -81,16 +83,22 @@ execute(main)
 "input: This will get printed back!"
 "This will get printed back!"
 
+assert True
+
 def respond(input):
     if input == 'yes':
         return output('You said YES!')
     else:
         return output('You said NO!')
 
+
 main = bind(input('respond input: '), respond)
 print(main)
 
 execute(main)
+
+assert True
+
 
 # Let’s modify the example so that it keeps asking the user for input until he/she says yes
 
@@ -103,10 +111,14 @@ def respond(input):
     else:
         return bind(output('Try saying \'yes\' once in a while.'), main_wrapper)
 
+
 main = bind(input('repeat respond input: '), respond)
 print(main)
 
 execute(main)
+
+assert True
+
 
 # So now recursion doesn’t seem to be a problem either.
 # Notice how we defined main_wrapper simply because bind expects a function of one argument.
@@ -122,10 +134,14 @@ def respond(input):
     else:
         return sequence(output('Try saying \'yes\' once in a while.'), main)
 
+
 main = bind(input('sequence respond input: '), respond)
 print(main)
 
 execute(main)
+
+assert True
+
 
 # To conclude, let’s write a program that asks the user for two lines of input,
 # concatenates them, and prints the result:
@@ -136,7 +152,10 @@ def respond2(input1):
 def respond1(input1):
     return bind(input('respond 2 input: '), respond2(input1))
 
+
 main = bind(input('respond 1 input: '), respond1)
 print(main)
 
 execute(main)
+
+assert True
