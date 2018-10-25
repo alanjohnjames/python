@@ -14,8 +14,9 @@ Repository containing my experiments in python code
 
     http://stupidpythonideas.blogspot.co.uk/2014/08/adts-for-python.html
 
+```html
     <iframe src="https://stupidpythonideas.blogspot.co.uk/2014/08/adts-for-python.html" height="500" width="500"></iframe>
-
+```
 
 ### Functional / Monads
 
