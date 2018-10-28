@@ -4,7 +4,7 @@
     http://attrs.readthedocs.io/en/stable/overview.html#on-the-attr-s-and-attr-ib-names
 """
 
-# %% 
+# %%
 import attr
 
 @attr.s
