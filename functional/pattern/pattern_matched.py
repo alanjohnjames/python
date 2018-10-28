@@ -171,7 +171,7 @@ Rifle = NamedTuple('Rifle', [('ammo' , int),
                              ('model' , str)])
 
 Knife = NamedTuple('Knife', [('shape' , List[Coordinate]),
-                             ('thatsNotAKnife', bool)])
+                             ('knifeIsBlunt', bool)])
 
 Weapon = Union[Rifle, Knife]
 
@@ -187,7 +187,7 @@ def canFight(robot: GiantRobot) -> bool:
     if isinstance(robot.weapon, Rifle):
         return robot.weapon.ammo > 0
     else: 
-        return not robot.weapon.thatsNotAKnife  # this is a knife
+        return not robot.weapon.knifeIsBlunt  # this is a knife
 
 # Great! we’ve created an API that’s clear, self-documenting, and compartively safe.
 # We’ve provided some limited guarantees of correctness;
