@@ -19,6 +19,9 @@ import pytest
 from dataclasses import dataclass
 from dataclasses import asdict
 
+#
+# dataclasses
+#
 
 @dataclass
 class SimpleDataObject:
@@ -28,59 +31,63 @@ class SimpleDataObject:
 dataclass_object1 = SimpleDataObject(1, 'a')
 dataclass_object2 = SimpleDataObject(2, 'b')
 
+#
+# tests
+#
 
 @pytest.mark.skip(reason="Expected Behaviour: Dataclasses to DataFrame.")
-def test_dataclass_to_dataframe():
+def test_expected_behaviour_dataclass_to_dataframe():
     """Dataclasses to DataFrame."""
-    df = pd.DataFrame(data=objects)
+    df = pd.DataFrame(data=[dataclass_object1, dataclass_object2])
     df.dtypes == ['field_a', 'field_b']
     df.dtypes == ['int', 'str']
 
 
 @pytest.mark.skip(reason="Expected Behaviour: DataFrame to Dataclasses.")
 # pytest.skip(reason="")
-def test_dataframe_to_dataclass():
+def test_expected_behaviour_dataframe_to_dataclass():
     """DataFrame to Dataclasses."""
     df = pd.DataFrame(columns=['field_a', 'field_b'], data=[[1, 'a'], [2, 'b']])
     dataclass_list = df.to_dataclasses()
     dataclass_list == [dataclass_object1, dataclass_object2]
 
 
-@dataclass
-class SimpleDataObject:
-    field_a: int
-    field_b: str
+def test_dataclass_equal():
+
+    x = SimpleDataObject(field_a=2, field_b='f')
+
+    assert x == SimpleDataObject(field_a=2, field_b='f')
 
 
-x = SimpleDataObject(field_a=2, field_b='f')
+def test_dataclass_to_dataframe():
 
-assert x == SimpleDataObject(field_a=2, field_b='f')
-
-
-def test_objects_to_dataframe():
+    _df = pd.DataFrame(columns=['field_a', 'field_b'], data=[[1, 'a'], [2, 'b']])
 
     dataclass_objects = [dataclass_object1, dataclass_object2]
 
     df = pd.DataFrame([asdict(x) for x in dataclass_objects])
 
     print(df)
-
     """   field_a field_b
     0        1       a
     1        2       b
     """
 
-    assert True
+    assert _df.equals(df)
 
 
-def test_dataframe_to_objects():
+def test_dataframe_to_dataclass():
+
+    _df = pd.DataFrame(columns=['field_a', 'field_b'], data=[[1, 'a'], [2, 'b']])
 
     dataclass_objects = [dataclass_object1, dataclass_object2]
 
     df = pd.DataFrame([asdict(x) for x in dataclass_objects])
 
+    assert _df.equals(df)
+
     records = df.to_dict(orient='records')
 
-    record_objects = [SimpleDataObject(*rec.values()) for rec in records]
+    record_objects = [SimpleDataObject(**rec) for rec in records]
 
-    assert True
+    assert record_objects == dataclass_objects
