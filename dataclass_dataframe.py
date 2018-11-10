@@ -44,7 +44,6 @@ def test_expected_behaviour_dataclass_to_dataframe():
 
 
 @pytest.mark.skip(reason="Expected Behaviour: DataFrame to Dataclasses.")
-# pytest.skip(reason="")
 def test_expected_behaviour_dataframe_to_dataclass():
     """DataFrame to Dataclasses."""
     df = pd.DataFrame(columns=['field_a', 'field_b'], data=[[1, 'a'], [2, 'b']])
