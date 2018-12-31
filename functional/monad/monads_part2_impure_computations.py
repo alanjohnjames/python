@@ -7,7 +7,7 @@ https://www.stephanboyer.com/post/10/monads-part-2-impure-computations
 
 """
 
-raw_input = input  # Remove conflict with between Python 3 funciton and variables called `input` 
+# raw_input = input  # Remove conflict with between Python 3 funciton and variables called `input` 
 
 
 # NOTE: The IO monad
@@ -43,7 +43,7 @@ def bind(x, f):
 # input = Computation(Computation.INPUT, [])
 
 # New implementation as a funciton accepting a prompt
-def input(prompt='input: '):
+def _input(prompt='input: '):
     return Computation(Computation.INPUT, [prompt])
 
 def output(text):
@@ -56,7 +56,7 @@ def execute(computation):
     elif computation.type == Computation.BIND:
         return execute(computation.data[1](execute(computation.data[0])))
     elif computation.type == Computation.INPUT:
-        return raw_input(computation.data[0])
+        return input(computation.data[0])
     elif computation.type == Computation.OUTPUT:
         print(computation.data[0])
         return None
@@ -76,14 +76,18 @@ def test_output():
 
 # NOTE: More advanced examples
 
-main = bind(input('repeat input: '), output)
-print(main)
+def test_repeat_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: "Repeat Input")
 
-execute(main)
-"input: This will get printed back!"
-"This will get printed back!"
+    main = bind(_input('repeat input: '), output)
+    print(main)
 
-assert True
+    execute(main)
+    "input: This will get printed back!"
+    "This will get printed back!"
+
+    assert True
+
 
 def respond(input):
     if input == 'yes':
@@ -91,13 +95,15 @@ def respond(input):
     else:
         return output('You said NO!')
 
+def test_respond_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: "Respond Input")
 
-main = bind(input('respond input: '), respond)
-print(main)
+    main = bind(_input('respond input: '), respond)
+    print(main)
 
-execute(main)
+    execute(main)
 
-assert True
+    assert True
 
 
 # Let’s modify the example so that it keeps asking the user for input until he/she says yes
@@ -111,13 +117,15 @@ def respond(input):
     else:
         return bind(output('Try saying \'yes\' once in a while.'), main_wrapper)
 
+def test_repeat_respond_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: "Repeat Respond Input")
 
-main = bind(input('repeat respond input: '), respond)
-print(main)
+    main = bind(_input('repeat respond input: '), respond)
+    print(main)
 
-execute(main)
+    execute(main)
 
-assert True
+    assert True
 
 
 # So now recursion doesn’t seem to be a problem either.
@@ -134,13 +142,15 @@ def respond(input):
     else:
         return sequence(output('Try saying \'yes\' once in a while.'), main)
 
+def test_sequence_respond_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: "Yes")
 
-main = bind(input('sequence respond input: '), respond)
-print(main)
+    main = bind(_input('sequence respond input: '), respond)
+    print(main)
 
-execute(main)
+    execute(main)
 
-assert True
+    assert True
 
 
 # To conclude, let’s write a program that asks the user for two lines of input,
@@ -150,12 +160,14 @@ def respond2(input1):
     return lambda input2: output('You said "' + input1 + '" and "' + input2 + '".')
 
 def respond1(input1):
-    return bind(input('respond 2 input: '), respond2(input1))
+    return bind(_input('respond 2 input: '), respond2(input1))
 
+def test_respond12_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: "Yes")
 
-main = bind(input('respond 1 input: '), respond1)
-print(main)
+    main = bind(_input('respond 1 input: '), respond1)
+    print(main)
 
-execute(main)
+    execute(main)
 
-assert True
+    assert True
