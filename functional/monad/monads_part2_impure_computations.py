@@ -77,7 +77,7 @@ def test_output():
 # NOTE: More advanced examples
 
 def test_repeat_input(monkeypatch):
-    monkeypatch.setattr('builtins.input', lambda x: "Repeat Input")
+    monkeypatch.setattr('builtins.input', lambda x: 'Repeat Input')
 
     main = bind(_input('repeat input: '), output)
     print(main)
@@ -89,14 +89,14 @@ def test_repeat_input(monkeypatch):
     assert True
 
 
-def respond(input):
-    if input == 'yes':
-        return output('You said YES!')
-    else:
-        return output('You said NO!')
-
 def test_respond_input(monkeypatch):
-    monkeypatch.setattr('builtins.input', lambda x: "Respond Input")
+    monkeypatch.setattr('builtins.input', lambda x: 'Respond Input')
+
+    def respond(input):
+        if input == 'yes':
+            return output('You said YES!')
+        else:
+            return output('You said NO!')
 
     main = bind(_input('respond input: '), respond)
     print(main)
@@ -108,17 +108,18 @@ def test_respond_input(monkeypatch):
 
 # Let’s modify the example so that it keeps asking the user for input until he/she says yes
 
-def main_wrapper(dummy):
-    return main
-
-def respond(input):
-    if input == 'yes':
-        return output('You said YES!')
-    else:
-        return bind(output('Try saying \'yes\' once in a while.'), main_wrapper)
 
 def test_repeat_respond_input(monkeypatch):
-    monkeypatch.setattr('builtins.input', lambda x: "Repeat Respond Input")
+    monkeypatch.setattr('builtins.input', lambda x: 'yes')  # TODO: paremeterise 'yes' and 'no'
+
+    def main_wrapper(dummy):
+        return main  # NOTE: main is defined from the the outer scope at runtime
+
+    def respond(input):
+        if input == 'yes':
+            return output('You said YES!')
+        else:
+            return bind(output('Try saying \'yes\' once in a while.'), main_wrapper)
 
     main = bind(_input('repeat respond input: '), respond)
     print(main)
@@ -133,17 +134,17 @@ def test_repeat_respond_input(monkeypatch):
 
 # It turns out that this is a common monadic pattern, so let’s abstract it:
 
-def sequence(u, v):
-    return bind(u, lambda x: v)
-
-def respond(input):
-    if input == 'yes':
-        return output('You said YES!')
-    else:
-        return sequence(output('Try saying \'yes\' once in a while.'), main)
-
 def test_sequence_respond_input(monkeypatch):
-    monkeypatch.setattr('builtins.input', lambda x: "Yes")
+    monkeypatch.setattr('builtins.input', lambda x: 'yes')
+
+    def sequence(u, v):
+        return bind(u, lambda x: v)
+
+    def respond(input):
+        if input == 'yes':
+            return output('You said YES!')
+        else:
+            return sequence(output('Try saying \'yes\' once in a while.'), main)
 
     main = bind(_input('sequence respond input: '), respond)
     print(main)
@@ -156,14 +157,14 @@ def test_sequence_respond_input(monkeypatch):
 # To conclude, let’s write a program that asks the user for two lines of input,
 # concatenates them, and prints the result:
 
-def respond2(input1):
-    return lambda input2: output('You said "' + input1 + '" and "' + input2 + '".')
-
-def respond1(input1):
-    return bind(_input('respond 2 input: '), respond2(input1))
-
 def test_respond12_input(monkeypatch):
-    monkeypatch.setattr('builtins.input', lambda x: "Yes")
+    monkeypatch.setattr('builtins.input', lambda x: 'yes')
+
+    def respond2(input1):
+        return lambda input2: output('You said "' + input1 + '" and "' + input2 + '".')
+
+    def respond1(input1):
+        return bind(_input('respond 2 input: '), respond2(input1))
 
     main = bind(_input('respond 1 input: '), respond1)
     print(main)
