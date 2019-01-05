@@ -38,6 +38,7 @@ def get_street_from_company(company):
 
 def test_perhaps():
 
+    # TODO: Use `dataclass Company` and `dataclass Address`
     company = {
         'name': 'Company Inc.',
         'address': {
