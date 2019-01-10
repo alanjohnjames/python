@@ -63,7 +63,7 @@ from typing import NewType
 
 a = TypeVar('a')
 
-State = NewType('State', int)
+State = int
 
 State
 
@@ -89,8 +89,8 @@ One key piece of the story is that this type constructor is a functor, which is 
 """
 
 #%%
-def fmap(f, program: StatefulProgram[a]): 
-    def function(initialState: State):
+def fmap(program: StatefulProgram[a], f: Callable[[a], State]) -> NewState[a]: 
+    def function(initialState: State) -> NewState[a]:
         result, newState = program(initialState)
         return f(result), newState
     return function
@@ -115,7 +115,7 @@ program(5)
 
 
 #%%
-newProgram = fmap(stringLength, program)
+newProgram = fmap(program, stringLength)
 
 newProgram
 
