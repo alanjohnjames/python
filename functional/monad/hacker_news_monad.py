@@ -45,31 +45,38 @@ We start with this: since a pure functional programming language doesn't have st
 So, for example, if the mutable state is some integer value, then stateful programs that return a value of type `a` will have this type:
 
     Int -> (a, Int)
-"""
 
-#%%
-"""
 Let's give that type constructor a convenient name:
 
     StatefulProgram(a) = Int -> (a, Int)
 """
 
+#%%
+from typing import Callable
 from typing import Tuple
 from typing import TypeVar
+from typing import NewType
+
+
+# If the mutable state is type `int`
+# Stateful programs that return a value of type `a` will have this type
 
 a = TypeVar('a')
 
-def StatefulProgram(a) -> Tuple[a, int]:
-    return Tuple[a, int]
+State = NewType('State', int)
+
+State
 
 #%%
-StatefulProgram(str)
+NewState = Tuple[a, State]
+
+NewState
 
 #%%
-StatefulProgram(int)
+StatefulProgram = Callable[[State], NewState[a]]
 
-# Alternatively... 
-# TODO: use typing.Callable[[a], Tuple[a,int]
+StatefulProgram[str]
+
 
 #%%
 """
@@ -81,18 +88,13 @@ One key piece of the story is that this type constructor is a functor, which is 
     }
 """
 
-def fmap(f, program): 
-    def function(initialState):
+#%%
+def fmap(f, program: StatefulProgram[a]): 
+    def function(initialState: State):
         result, newState = program(initialState)
         return f(result), newState
     return function
 
-def stringLength(s):
-    return len(s)
-
-program = lambda program_state: ("no result", program_state - 1)
-
-program
 
 #%%
 """
@@ -102,12 +104,23 @@ Then, if we have a stateful program which produces a string (i.e. its type is `S
 
 """
 
+#%%
+def stringLength(s: str) -> int:
+    return len(s)
+
+def program(initial_state: State) -> NewState[str]:
+    return "initial_state", initial_state
+
+program(5)
+
+
+#%%
 newProgram = fmap(stringLength, program)
 
 newProgram
 
 #%%
-initialState = 5
+initialState: State = 5
 
 program(initialState)
 
@@ -126,9 +139,9 @@ Another way to phrase this is: we can compose a stateful program with a pure fun
     }
 """
 
+#%%
 # def bind(program, callback): pass
 
-#%%
 """
 Some languages call this function `flatMap` instead of `bind`. In JavaScript, this is like the `then` function for promises. Whatever we call it, we can easily use it to write a helper function which sequences two stateful programs:
 
@@ -140,6 +153,7 @@ This amounts to running the first program, throwing away its result (see that th
 """
 
 #%%
+
 """
 One more ingredient is needed to make this `StatefulProgram` idea really useful. We need a way to construct a stateful program that just produces a value without touching the state. We'll call this function `pure`:
 
@@ -148,8 +162,6 @@ One more ingredient is needed to make this `StatefulProgram` idea really useful.
     }
 """
 
-
-#%%
 """
 Here's what makes `StatefulProgram` a monad:
     a) First of all, it needs to be a functor. That amounts to having a `map` function like we defined above.
@@ -187,6 +199,8 @@ That callback hell is quite an eyesore, and I think that's one of several reason
 
 
 #%% [END OF FILE]
+
+
 
 """
 In Haskell, we would have a function pronounced bind that takes a stateful program and a callback. The callback gets the result of the stateful program and returns a new stateful program to run next.
