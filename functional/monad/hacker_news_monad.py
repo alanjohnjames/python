@@ -89,8 +89,9 @@ One key piece of the story is that this type constructor is a functor, which is 
 """
 
 #%%
-def fmap(program: StatefulProgram[a], f: Callable[[a], State]) -> NewState[a]: 
-    def function(initialState: State) -> NewState[a]:
+def fmap(program: StatefulProgram[a],
+         f: Callable[[a], State]) -> StatefulProgram[a]: 
+    def function(initialState: State) -> NewState[int]:
         result, newState = program(initialState)
         return f(result), newState
     return function
@@ -105,13 +106,21 @@ Then, if we have a stateful program which produces a string (i.e. its type is `S
 """
 
 #%%
+StatefulProgram[str]
+
+#%%
+def program(initial_state: State) -> NewState[str]:
+    return "program produces a sting...", initial_state
+
+initialState: State = 5
+
+program(initialState)
+
+# isinstance(program, StatefulProgram[str])
+
+#%%
 def stringLength(s: str) -> int:
     return len(s)
-
-def program(initial_state: State) -> NewState[str]:
-    return "initial_state", initial_state
-
-program(5)
 
 
 #%%
@@ -120,13 +129,10 @@ newProgram = fmap(program, stringLength)
 newProgram
 
 #%%
-initialState: State = 5
-
-program(initialState)
-
-#%%
 newProgram(initialState)
 
+
+# How does the state change ? 
 
 #%%
 """
@@ -220,5 +226,7 @@ def bind(program, callback):
         return newProgram(newState)
     return function
 
-bind(program, stringLength)(initialState)
+bind(program, stringLength)(stringLength)
 
+
+#%%
