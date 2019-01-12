@@ -20,6 +20,11 @@ And Monads for (Almost) All: The State Monad
 http://rcardin.github.io/design/programming/fp/monad/2018/11/22/and-monads-for-all-state-monad.html)
 """
 
+#%%
+from typing import Callable
+from typing import Tuple
+from typing import TypeVar
+from typing import NewType
 
 #%%
 """
@@ -52,27 +57,19 @@ Let's give that type constructor a convenient name:
 """
 
 #%%
-from typing import Callable
-from typing import Tuple
-from typing import TypeVar
-from typing import NewType
-
-
 # If the mutable state is type `int`
 # Stateful programs that return a value of type `a` will have this type
 
 a = TypeVar('a')
 
-State = int
-
-State
-
-#%%
+State = NewType('State', int)
 NewState = Tuple[a, State]
 
-NewState
+NewState[a]
 
 #%%
+# Let's give that type constructor a convenient name:
+
 StatefulProgram = Callable[[State], NewState[a]]
 
 StatefulProgram[str]
@@ -112,7 +109,7 @@ StatefulProgram[str]
 def program(initial_state: State) -> NewState[str]:
     return "program produces a sting...", initial_state
 
-initialState: State = 5
+initialState = 5
 
 program(initialState)
 
@@ -122,8 +119,6 @@ program(initialState)
 def stringLength(s: str) -> int:
     return len(s)
 
-
-#%%
 newProgram = fmap(program, stringLength)
 
 newProgram
@@ -145,9 +140,34 @@ Another way to phrase this is: we can compose a stateful program with a pure fun
     }
 """
 
-#%%
-# def bind(program, callback): pass
 
+#%%
+def bind(program, callback):
+    def function(initialState):
+        result, newState = program(initialState)
+        newProgram = callback(result)
+        return newProgram(newState)
+    return function
+
+
+def function(initialState):
+    result, newState = program(initialState)
+    newProgram = callback(result)
+    return newProgram(newState)
+    
+#%%
+
+callback = lambda result: newProgram
+
+function(initialState)
+
+#%%
+bind(program, callback)
+
+bind(program, callback)(initialState)
+
+
+#%%
 """
 Some languages call this function `flatMap` instead of `bind`. In JavaScript, this is like the `then` function for promises. Whatever we call it, we can easily use it to write a helper function which sequences two stateful programs:
 
@@ -159,7 +179,6 @@ This amounts to running the first program, throwing away its result (see that th
 """
 
 #%%
-
 """
 One more ingredient is needed to make this `StatefulProgram` idea really useful. We need a way to construct a stateful program that just produces a value without touching the state. We'll call this function `pure`:
 
@@ -205,28 +224,3 @@ That callback hell is quite an eyesore, and I think that's one of several reason
 
 
 #%% [END OF FILE]
-
-
-
-"""
-In Haskell, we would have a function pronounced bind that takes a stateful program and a callback. The callback gets the result of the stateful program and returns a new stateful program to run next.
-
-    bind(program, callback) = function(initialState) {
-        (result, newState) = program(initialState)
-        newProgram = callback(result)
-        return newProgram(newState)
-    }
-"""
-
-#%%
-def bind(program, callback):
-    def function(initialState):
-        result, newState = program(initialState)
-        newProgram = callback(result)
-        return newProgram(newState)
-    return function
-
-bind(program, stringLength)(stringLength)
-
-
-#%%
