@@ -12,7 +12,7 @@ data Direction
 class Reversible a where
   reverse :: a -> a
 
-instance reversibleDirection :: Reversible Direction where
+instance reverseDirection :: Reversible Direction where
   reverse North = South
   reverse South = North
   reverse East = West
@@ -24,13 +24,13 @@ mirror a = Tuple a (reverse a)
 """
 
 #%%
-from typing import TypeVar, Generic, Union
+from typing import TypeVar, Generic, Union, Type
 from dataclasses import dataclass
 
 #%%
 # NOTE: Should Direction be;
 # a conventional class Direction
-# or a Union https://mypy.readthedocs.io/en/latest/kinds_of_types.html?highlight=union#union-types
+# or a mypy Union https://mypy.readthedocs.io/en/latest/kinds_of_types.html?highlight=union#union-types
 
 @dataclass(frozen=True)
 class Direction: pass
@@ -43,27 +43,37 @@ class West(Direction): pass
 
 #%%
 # NOTE: Should Reversible be; 
-# a Generic https://mypy.readthedocs.io/en/latest/generics.html
-# or a Protocol https://mypy.readthedocs.io/en/latest/protocols.html#simple-user-defined-protocols
+# Generic https://mypy.readthedocs.io/en/latest/generics.html
 
 T = TypeVar('T')
 
-# NOTE: Not actually used
+@dataclass(frozen=True)  # NOTE: Must be immutable (forzen) to use as dict key
 class Reversible(Generic[T]):  # pylint: disable=unsubscriptable-object
-    reverse: T
+    type: T
 
-def reverse_direction(reverse: Direction) -> Direction:
+# NOTE: How to use Reversible ?
+Reversible[Direction]
+Reversible[North]
+Reversible[str]
+
+#%%
+# TODO: Why does reverse: Reversible[Direction] cause mypy error ?
+def reverse_direction(reverse: Type[Direction]) -> Type[Direction]:
+    # NOTE: This is a dict of *types* not class *instances*
     return {
-        North(): South(),
-        South(): North(),
-        East(): West(),
-        West(): East()
+        North: South,
+        South: North,
+        East: West,
+        West: East
     }[reverse]
 
 
 #%%
-reverse_direction(North()) == South()
-reverse_direction(South()) == North()
-reverse_direction(East()) == West()
-reverse_direction(West()) == East()
+reverse_direction(North) == South
+reverse_direction(South) == North
+reverse_direction(East) == West
+reverse_direction(West) == East
 
+#%%
+# NOTE: Should Reversible be; 
+# Protocol https://mypy.readthedocs.io/en/latest/protocols.html#simple-user-defined-protocols
