@@ -26,20 +26,7 @@ mirror a = Tuple a (reverse a)
 #%%
 from typing import TypeVar, Generic, Union, Type
 from dataclasses import dataclass
-
-#%%
-# NOTE: Should Direction be;
-# a conventional class Direction
-# or a mypy Union https://mypy.readthedocs.io/en/latest/kinds_of_types.html?highlight=union#union-types
-
-@dataclass(frozen=True)
-class Direction: pass
-
-class North(Direction): pass
-class South(Direction): pass
-class East(Direction): pass
-class West(Direction): pass
-
+from direction_class import *
 
 #%%
 # NOTE: Should Reversible be; 
@@ -75,5 +62,3 @@ reverse_direction(East) == West
 reverse_direction(West) == East
 
 #%%
-# NOTE: Should Reversible be; 
-# Protocol https://mypy.readthedocs.io/en/latest/protocols.html#simple-user-defined-protocols
