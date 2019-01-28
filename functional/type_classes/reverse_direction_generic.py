@@ -4,19 +4,19 @@ spicydonuts/purescript.md
 https://gist.github.com/spicydonuts/a2e712bc1872ee9eb898   
 
 data Direction
-  = North
-  | South
-  | East
-  | West
+    = North
+    | South
+    | East
+    | West
 
 class Reversible a where
-  reverse :: a -> a
+    reverse :: a -> a
 
 instance reverseDirection :: Reversible Direction where
-  reverse North = South
-  reverse South = North
-  reverse East = West
-  reverse West = East
+    reverse North = South
+    reverse South = North
+    reverse East = West
+    reverse West = East
 
 mirror :: forall a. (Reversible a) => a -> Tuple a a
 mirror a = Tuple a (reverse a)
@@ -24,9 +24,10 @@ mirror a = Tuple a (reverse a)
 """
 
 #%%
-from typing import TypeVar, Generic, Union, Type
+from typing import TypeVar, Generic, Union
 from dataclasses import dataclass
-from direction_class import *
+from functional.type_classes.direction_class import Direction
+from functional.type_classes.direction_class import North, South, East, West
 
 #%%
 # NOTE: Should Reversible be; 
@@ -41,11 +42,9 @@ class Reversible(Generic[T]):  # pylint: disable=unsubscriptable-object
 # NOTE: How to use Reversible ?
 Reversible[Direction]
 Reversible[North]
-Reversible[str]
 
 #%%
-# TODO: Why does reverse: Reversible[Direction] cause mypy error ?
-def reverse_direction(reverse: Type[Direction]) -> Type[Direction]:
+def reverse_direction(reverse: Reversible[Direction]) -> Direction:
     # NOTE: This is a dict of *types* not class *instances*
     return {
         North: South,

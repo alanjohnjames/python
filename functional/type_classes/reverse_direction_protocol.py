@@ -4,19 +4,19 @@ spicydonuts/purescript.md
 https://gist.github.com/spicydonuts/a2e712bc1872ee9eb898   
 
 data Direction
-  = North
-  | South
-  | East
-  | West
+    = North
+    | South
+    | East
+    | West
 
 class Reversible a where
-  reverse :: a -> a
+    reverse :: a -> a
 
 instance reverseDirection :: Reversible Direction where
-  reverse North = South
-  reverse South = North
-  reverse East = West
-  reverse West = East
+    reverse North = South
+    reverse South = North
+    reverse East = West
+    reverse West = East
 
 mirror :: forall a. (Reversible a) => a -> Tuple a a
 mirror a = Tuple a (reverse a)
@@ -58,15 +58,12 @@ class ReverseDirection:  # NOTE: No Reversible base class!
 ReverseDirection.reverse(North)
 
 #%%
-def reverse_all(items: Iterable[Reversible]) -> list:
+def reverse_all(items: Iterable[Reversible]) -> Iterable[Direction]:
     return [ReverseDirection.reverse(item) for item in items]
 
 #%%
-rev = reverse_all([North])
+rev = reverse_all([North, South, East, West])
 
 rev
-
-#%%
-print(rev)
 
 #%%
