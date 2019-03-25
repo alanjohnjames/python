@@ -170,23 +170,15 @@ class Pattern6:
         keys = list(conditions.keys())
         values = list(conditions.values())
         pattern = self.pattern
+
+
+        {}
+        all(passed == spec for (passed, spec) in zip(keys, values))
+
         return {    
-            pattern[0] == keys[0]: values[0]
+            self.pattern[0] == keys[0]: values[0]
         }[True]
 
-
-#%%
-c = {
-    1: 'one',
-    2: 'two',
-    3: 'three'
-}
-
-#%%
-c
-
-#%%
-list(c.keys())[0]
 
 #%%
 Pattern6(1).match({
@@ -195,5 +187,67 @@ Pattern6(1).match({
     3: 'three',
     4: lambda x: x*x
 })
+
+#%%
+p = Pattern6(2, 1)
+
+p.pattern
+
+#%%
+m = {
+    (1, 1): 'one-one',
+    (1, 2): 'one-two',
+    (2, 1): 'two-one',
+    (2, 2): 'two-two',
+}
+
+m[p.pattern]
+
+
+#%%
+p.match(m)
+
+
+#%%
+a = 2
+b = 1
+
+m = {
+    all((a == 1, b == 1)): 'one-one',
+    all((a == 1, b == 2)): 'one-two',
+    all((a == 2, b == 1)): 'two-one',
+    all((a == 2, b == 2)): 'two-two',
+}
+
+m
+
+#%%
+m[True]
+
+#
+# pattern
+#
+
+#%%
+def pattern(*args):
+    return all(args)
+
+pattern(a == 2, b == 1)
+
+#%%
+a = 2
+b = 1
+
+m = {
+    pattern(a == 1, b == 1): 'one-one',
+    pattern(a == 1, b == 2): 'one-two',
+    pattern(a == 2, b == 1): 'two-one',
+    pattern(a == 2, b == 2): 'two-two',
+}
+
+m
+
+#%%
+type(1) is int 
 
 #%%
