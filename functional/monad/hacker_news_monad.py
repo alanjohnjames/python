@@ -17,6 +17,8 @@ os.getcwd()
 And Monads for (Almost) All: The State Monad
 --------------------------------------------
 
+https://news.ycombinator.com/item?id=18520321
+
 http://rcardin.github.io/design/programming/fp/monad/2018/11/22/and-monads-for-all-state-monad.html)
 """
 
