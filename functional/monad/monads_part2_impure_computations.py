@@ -12,6 +12,19 @@ https://www.stephanboyer.com/post/10/monads-part-2-impure-computations
 
 # NOTE: The IO monad
 
+#%%
+from enum import Enum
+
+class ComputationE(Enum):
+    UNIT   = 0
+    BIND   = 1
+    INPUT  = 2
+    OUTPUT = 3
+
+ComputationE.UNIT
+
+
+#%%
 class Computation:
     UNIT   = 0
     BIND   = 1
@@ -42,7 +55,7 @@ def bind(x, f):
 # Original implementation
 # input = Computation(Computation.INPUT, [])
 
-# New implementation as a funciton accepting a prompt
+# New implementation as a function accepting a prompt
 def _input(prompt='input: '):
     return Computation(Computation.INPUT, [prompt])
 
@@ -172,3 +185,6 @@ def test_respond12_input(monkeypatch):
     execute(main)
 
     assert True
+
+
+#%%
