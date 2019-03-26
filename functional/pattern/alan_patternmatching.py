@@ -208,25 +208,13 @@ m[p.pattern]
 p.match(m)
 
 
+#
+# DESIGN 7: simple `match` function
+#
+
 #%%
 a = 2
 b = 1
-
-m = {
-    all((a == 1, b == 1)): 'one-one',
-    all((a == 1, b == 2)): 'one-two',
-    all((a == 2, b == 1)): 'two-one',
-    all((a == 2, b == 2)): 'two-two',
-}
-
-m
-
-#%%
-m[True]
-
-#
-# pattern
-#
 
 #%%
 def pattern(*args):
@@ -247,7 +235,57 @@ m = {
 
 m
 
+
+#
+# DESIGN 7:
+#
+
 #%%
-type(1) is int 
+from dataclasses import dataclass
+
+class Pattern7:
+
+    def __init__(self, *args):
+        self.args = args
+
+    def match(self, conditions: dict):
+        keys = list(conditions.keys())
+        values = list(conditions.values())
+
+        # TODO: How to pass the conditions in here? 
+        return {
+            pattern(a == 1, b == 1): 'one-one',
+            pattern(a == 1, b == 2): 'one-two',
+            pattern(a == 2, b == 1): 'two-one',
+            pattern(a == 2, b == 2): 'two-two',
+        }[True]
+
+
+
+#%%
+def match(self, *kwargs, conditions: dict):
+
+    p = pattern(kwargs)
+
+    print(f"kwargs = {kwargs}")
+
+    return conditions[True]
+
+# TODO: def values(...)
+k = {'c': 2, 'd': 1}
+
+match(*k, conditions={True: 'Matched condition...'})
+
+
+#%%
+
+# TODO: This is the syntax I want...
+match(a=2, b=1, conditions={
+    pattern(a == 1, b == 1): 'one-one',
+    pattern(a == 1, b == 2): 'one-two',
+    pattern(a == 2, b == 1): 'two-one',
+    pattern(a == 2, b == 2): 'two-two',
+})
+
 
 #%%
