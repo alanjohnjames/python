@@ -263,7 +263,7 @@ class Pattern7:
 
 
 #%%
-def match(self, *kwargs, conditions: dict):
+def match(*kwargs, conditions: dict):
 
     p = pattern(kwargs)
 
@@ -280,12 +280,48 @@ match(*k, conditions={True: 'Matched condition...'})
 #%%
 
 # TODO: This is the syntax I want...
-match(a=2, b=1, conditions={
+# TODO: conditions=lambda x, y: {(x==.., y==..): ...}
+match({'a': 2, 'b': 2}, conditions={
     pattern(a == 1, b == 1): 'one-one',
     pattern(a == 1, b == 2): 'one-two',
     pattern(a == 2, b == 1): 'two-one',
     pattern(a == 2, b == 2): 'two-two',
 })
+
+
+# TODO: This is the syntax I want...
+def match(a, b, conditions):
+    # TODO: Code to construct the conditions dict...in terms of `a` and `b`
+    return conditions[True] 
+
+# TODO: This is the syntax I want...
+match(a=2, b=2, conditions={
+    pattern(1, 1): 'one-one',  # TODO: Here patern returns a `tuple` 
+    pattern(1, 2): 'one-two',
+    pattern(2, 1): 'two-one',
+    pattern(2, 2): 'two-two',
+})
+
+#%%
+# https://medium.com/@jondot/functional-programming-with-python-for-people-without-time-1eebdbd9526c
+# 
+# As described in the above article, the function `pattern(...)` could be curried
+# and match incrementally on each argument each time returning a new ( partially matched) funciton. 
+#
+# Remember that the arguments to `pattern` function imply and *and* condition between matches. 
+# Are more flexible design might be to have a single key (rather than a `tuple`) that makes the `and` explicit;
+
+a = 2
+b = 1
+
+conditions={
+    a == 1 and b == 1: 'one-one',
+    a == 1 and b == 2: 'one-two',
+    a == 2 and b == 1: 'two-one',
+    a == 2 and b == 2: 'two-two',
+}[True]
+
+conditions
 
 
 #%%
