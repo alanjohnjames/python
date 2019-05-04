@@ -1,3 +1,4 @@
+#%%
 """Steven F. Lott.
 
 Chapter 13: Conditional Expressions and the Operator Module
@@ -6,6 +7,19 @@ http://xlb.es/Functional%20Python%20Programming%20-%20Steve%20Lott%20-%202015.pd
 
 
 """
+
+#%% [markdown]
+
+# # Chapter13: Conditional Expressions and the Operator Module
+
+# Functional programming emphasizes lazy or non-strict ordering of operations. The idea is to allow the compiler or runtime to do as little work as possible to compute the answer. Python tends to impose strict ordering on evaluations.
+# For example, we used the Python `if`, `elif`, and `else` statements. They're clear and readable, but they imply a strict ordering on the evaluation of the conditions. We can, to an extent, free ourselves from the strict ordering here, and develop a limited kind of non-strict conditional statement. It's not clear if this is helpful but it shows some alternative ways to express an algorithm in a functional style.
+
+# The first part of this chapter will look at ways we can implement non-strict evaluation. This is a tool that's interesting because it can lead to performance optimizations.
+
+# In the previous chapters, we looked at a number of higher-order functions. In some cases, we used these higher-order functions to apply fairly sophisticated functions to collections of data. In other cases, we applied simple functions to collections of data.
+
+# Indeed, in many cases, we wrote tiny lambda objects to apply a single Python operator to a function. For example, we can use the following to define a prod() function:
 
 #%%
 import functools
