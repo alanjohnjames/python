@@ -7,11 +7,24 @@ https://www.stephanboyer.com/post/10/monads-part-2-impure-computations
 
 """
 
-raw_input = input  # Remove conflict with between Python 3 funciton and variables called `input` 
+# raw_input = input  # Remove conflict with between Python 3 funciton and variables called `input` 
 
 
 # NOTE: The IO monad
 
+#%%
+from enum import Enum
+
+class ComputationE(Enum):
+    UNIT   = 0
+    BIND   = 1
+    INPUT  = 2
+    OUTPUT = 3
+
+ComputationE.UNIT
+
+
+#%%
 class Computation:
     UNIT   = 0
     BIND   = 1
@@ -42,8 +55,8 @@ def bind(x, f):
 # Original implementation
 # input = Computation(Computation.INPUT, [])
 
-# New implementation as a funciton accepting a prompt
-def input(prompt='input: '):
+# New implementation as a function accepting a prompt
+def _input(prompt='input: '):
     return Computation(Computation.INPUT, [prompt])
 
 def output(text):
@@ -56,7 +69,7 @@ def execute(computation):
     elif computation.type == Computation.BIND:
         return execute(computation.data[1](execute(computation.data[0])))
     elif computation.type == Computation.INPUT:
-        return raw_input(computation.data[0])
+        return input(computation.data[0])
     elif computation.type == Computation.OUTPUT:
         print(computation.data[0])
         return None
@@ -76,48 +89,57 @@ def test_output():
 
 # NOTE: More advanced examples
 
-main = bind(input('repeat input: '), output)
-print(main)
+def test_repeat_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: 'Repeat Input')
 
-execute(main)
-"input: This will get printed back!"
-"This will get printed back!"
+    main = bind(_input('repeat input: '), output)
+    print(main)
 
-assert True
+    execute(main)
+    "input: This will get printed back!"
+    "This will get printed back!"
 
-def respond(input):
-    if input == 'yes':
-        return output('You said YES!')
-    else:
-        return output('You said NO!')
+    assert True
 
 
-main = bind(input('respond input: '), respond)
-print(main)
+def test_respond_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: 'Respond Input')
 
-execute(main)
+    def respond(input):
+        if input == 'yes':
+            return output('You said YES!')
+        else:
+            return output('You said NO!')
 
-assert True
+    main = bind(_input('respond input: '), respond)
+    print(main)
+
+    execute(main)
+
+    assert True
 
 
 # Let’s modify the example so that it keeps asking the user for input until he/she says yes
 
-def main_wrapper(dummy):
-    return main
 
-def respond(input):
-    if input == 'yes':
-        return output('You said YES!')
-    else:
-        return bind(output('Try saying \'yes\' once in a while.'), main_wrapper)
+def test_repeat_respond_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: 'yes')  # TODO: paremeterise 'yes' and 'no'
 
+    def main_wrapper(dummy):
+        return main  # NOTE: main is defined from the the outer scope at runtime
 
-main = bind(input('repeat respond input: '), respond)
-print(main)
+    def respond(input):
+        if input == 'yes':
+            return output('You said YES!')
+        else:
+            return bind(output('Try saying \'yes\' once in a while.'), main_wrapper)
 
-execute(main)
+    main = bind(_input('repeat respond input: '), respond)
+    print(main)
 
-assert True
+    execute(main)
+
+    assert True
 
 
 # So now recursion doesn’t seem to be a problem either.
@@ -125,37 +147,44 @@ assert True
 
 # It turns out that this is a common monadic pattern, so let’s abstract it:
 
-def sequence(u, v):
-    return bind(u, lambda x: v)
+def test_sequence_respond_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: 'yes')
 
-def respond(input):
-    if input == 'yes':
-        return output('You said YES!')
-    else:
-        return sequence(output('Try saying \'yes\' once in a while.'), main)
+    def sequence(u, v):
+        return bind(u, lambda x: v)
 
+    def respond(input):
+        if input == 'yes':
+            return output('You said YES!')
+        else:
+            return sequence(output('Try saying \'yes\' once in a while.'), main)
 
-main = bind(input('sequence respond input: '), respond)
-print(main)
+    main = bind(_input('sequence respond input: '), respond)
+    print(main)
 
-execute(main)
+    execute(main)
 
-assert True
+    assert True
 
 
 # To conclude, let’s write a program that asks the user for two lines of input,
 # concatenates them, and prints the result:
 
-def respond2(input1):
-    return lambda input2: output('You said "' + input1 + '" and "' + input2 + '".')
+def test_respond12_input(monkeypatch):
+    monkeypatch.setattr('builtins.input', lambda x: 'yes')
 
-def respond1(input1):
-    return bind(input('respond 2 input: '), respond2(input1))
+    def respond2(input1):
+        return lambda input2: output('You said "' + input1 + '" and "' + input2 + '".')
+
+    def respond1(input1):
+        return bind(_input('respond 2 input: '), respond2(input1))
+
+    main = bind(_input('respond 1 input: '), respond1)
+    print(main)
+
+    execute(main)
+
+    assert True
 
 
-main = bind(input('respond 1 input: '), respond1)
-print(main)
-
-execute(main)
-
-assert True
+#%%

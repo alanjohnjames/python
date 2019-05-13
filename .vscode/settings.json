@@ -1,10 +1,7 @@
 {
     "python.linting.pylintEnabled": true,
-
-    // Path to Python, you can use a custom version of Python by modifying this setting to include the full path.
-    "python.pythonPath": "/Users/alan/anaconda3/envs/alan_env/bin/python",
-    "python.unitTest.pyTestEnabled": true,
-    "python.unitTest.pyTestArgs": [
+    "python.testing.pyTestEnabled": true,
+    "python.testing.pyTestArgs": [
         "."
     ],
     "python.linting.mypyEnabled": true,
