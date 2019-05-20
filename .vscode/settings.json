@@ -8,5 +8,6 @@
     "python.linting.enabled": true,
     "files.exclude": {
         "**/__pycache__/**": true
-    }
+    },,
+    "python.jediEnabled": false
 }
