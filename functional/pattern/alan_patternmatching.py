@@ -163,20 +163,16 @@ from dataclasses import dataclass
 
 class Pattern6:
 
-    def __init__(self, *args):
-        self.pattern = args
+    def __init__(self, pattern):
+        self.pattern = pattern
 
     def match(self, conditions: dict):
         keys = list(conditions.keys())
         values = list(conditions.values())
         pattern = self.pattern
 
-
-        {}
-        all(passed == spec for (passed, spec) in zip(keys, values))
-
         return {    
-            self.pattern[0] == keys[0]: values[0]
+            self.pattern == key: val for (key, val) in zip(keys, values)
         }[True]
 
 
@@ -189,7 +185,7 @@ Pattern6(1).match({
 })
 
 #%%
-p = Pattern6(2, 1)
+p = Pattern6((2, 1))
 
 p.pattern
 
@@ -206,6 +202,16 @@ m[p.pattern]
 
 #%%
 p.match(m)
+
+def match(pattern, conditions: dict):
+    keys = list(conditions.keys())
+    values = list(conditions.values())
+
+    return {    
+        pattern == key: val for (key, val) in zip(keys, values)
+    }[True]
+
+match(p.pattern, m)
 
 
 #
