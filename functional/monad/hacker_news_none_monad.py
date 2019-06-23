@@ -130,3 +130,26 @@ main4('user1')
 
 # Please forgive any blinding mistakes I've made in my code.
 
+#%%
+#
+# Curry.
+# 
+from toolz.functoolz import curry
+
+@curry
+def send_message(user="", msg="<No Message>", email=True):
+    try:
+        print(f"Sending {'email' if email else 'letter'} to {user} which says {msg}")
+        return None
+    except Exception as e:
+        return f"Failed to send message; {e}"
+
+send_email = send_message(msg="Hi there!", email=False)
+
+send_email(user="Steve")
+
+#%%
+message_steve = send_message(user="Steve")
+
+message_steve(msg="Goodbye!")
+
