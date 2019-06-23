@@ -137,7 +137,7 @@ main4('user1')
 from toolz.functoolz import curry
 
 @curry
-def send_message(user="", msg="<No Message>", email=True):
+def send_message(user, msg, email=True):
     try:
         print(f"Sending {'email' if email else 'letter'} to {user} which says {msg}")
         return None
@@ -149,7 +149,10 @@ send_email = send_message(msg="Hi there!", email=False)
 send_email(user="Steve")
 
 #%%
-message_steve = send_message(user="Steve")
+message_steve = send_message("Steve")
 
 message_steve(msg="Goodbye!")
 
+
+
+#%%
