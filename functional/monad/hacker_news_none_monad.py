@@ -5,8 +5,22 @@ https://news.ycombinator.com/item?id=4959680
 
 """
 
-#%%
+# As you can see, it's getting a bit hairy.
+# But, what if we had a class that dealt with the Nones for us?
+# This is what a monad is: an interface, that many different instances implement,
+# which provides some behavior. The following only deals with single-argument functions, but:
+
 from dataclasses import dataclass
+from typing import Any
+
+
+#
+# Curry.
+#
+
+# But... what if we want to log the status of that send_message call?
+from toolz.functoolz import curry
+
 
 @dataclass
 class User:
@@ -20,7 +34,7 @@ class Database:
         "user2": User("Sue", "sue@mail.com"),
     }
 
-#%%
+
 @dataclass
 class Email:
     to: str
@@ -34,8 +48,8 @@ class Email:
         self.sent = True if not self.sent else False
         return True if self.sent else False
 
-#%%
-# dons' explanation will be better/more rigorous than mine, but in a more familiar syntax (Python), # let's say you've got some functions:
+
+# Dons' explanation will be better/more rigorous than mine, but in a more familiar syntax (Python), # let's say you've got some functions:
 
 def get_user(id):
     # returns None if no such user exists
@@ -44,64 +58,60 @@ def get_user(id):
     except KeyError:
         return None
 
-def send_message(user, message):
+def send_message1(user, message):
     Email(user.email, message).send()
 
 def log(message):
     print(message)
 
-#%%
+
 def main1():
     user = get_user("user1")
     # uhoh -- this could be None and we didn't handle it!
-    send_message(user, f"Hello {user.name}")
+    send_message1(user, f"Hello {user.name}")
     log(f"Message sent.")
 
-main1()
+def test_main1():
+    main1()
 
-#%%
+
 # So, we add a None check:
 def main2():
     user = get_user("unknown_user")
     if user != None:
-        send_message(user, f"Hello {user.name}")
+        send_message1(user, f"Hello {user.name}")
     log(f"Was the message sent? I don't know.")
 
-main2()
+def test_main2():
+    main2()
 
-#%%
-# But... what if we want to log the status of that send_message call?
-from toolz.functoolz import curry
 
 @curry
-def send_message(user, msg):
+def send_message2(user, msg):
     try:
         Email(user.email, msg).send()
         return None
     except Exception as e:
         return f"Failed to send message; {e}"
 
-#%%
+
 # (Note that this is a contrived example, please don't critique the general dumbness ;)).
 # Now...
 def main3():
     user = get_user(1)
     if user != None:
-        response = send_message(user, f"Hello {user}")
+        response = send_message2(user, f"Hello {user}")
         if response != None:
             log(response)
     log(f"Was the user found? Was the message sent? I don't know.")
 
-main3()
+def test_main3():
+    main3()
 
-#%%
-# As you can see, it's getting a bit hairy.
-# But, what if we had a class that dealt with the Nones for us? 
-# This is what a monad is: an interface, that many different instances implement,
-# which provides some behavior. The following only deals with single-argument functions, but:
+
+@dataclass
 class NoneMonad:
-    def __init__(self, arg):
-        self.arg = arg
+    arg: Any
 
     def bind(self, func):
         if self.arg != None:
@@ -110,19 +120,19 @@ class NoneMonad:
         else:
             return NoneMonad(None)
 
-#%%
+
 # Now, we...
 def main4(user_id):
     return (NoneMonad(user_id)
                 .bind(get_user)
-                .bind(send_message(msg="Hello user."))
+                .bind(send_message2(msg="Hello user."))
                 .bind(log))
 
-#%%5
-main4(1)
+def test_main4():
+    main4(1)
 
-#%%
-main4('user1')
+def test_main4_user1():
+    main4('user1')
 
 # And, boom, the Nones are handled. Real, non-contrived Monads do more (and implement other behaviours -- like in dons' example, the Either response, or the Maybe monad, etc.), but hopefully this demonstrates the strength. Haskell's typically used as the example language, because there's syntax sugar in Haskell for making dealing with Monads prettier :).
 
@@ -130,29 +140,22 @@ main4('user1')
 
 # Please forgive any blinding mistakes I've made in my code.
 
-#%%
-#
-# Curry.
-# 
-from toolz.functoolz import curry
 
 @curry
-def send_message(user, msg, email=True):
+def send_message3(user, msg, email=True):
     try:
         print(f"Sending {'email' if email else 'letter'} to {user} which says {msg}")
         return None
     except Exception as e:
         return f"Failed to send message; {e}"
 
-send_email = send_message(msg="Hi there!", email=False)
 
-send_email(user="Steve")
+def main5():
+    send_email = send_message3(msg="Hi there!", email=False)
+    send_email(user="Steve")
 
-#%%
-message_steve = send_message("Steve")
+    message_steve = send_message3("Steve")
+    message_steve(msg="Goodbye!")
 
-message_steve(msg="Goodbye!")
-
-
-
-#%%
+def test_main5():
+    main5()
