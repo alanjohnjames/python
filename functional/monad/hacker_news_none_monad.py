@@ -5,22 +5,16 @@ https://news.ycombinator.com/item?id=4959680
 
 """
 
-# As you can see, it's getting a bit hairy.
-# But, what if we had a class that dealt with the Nones for us?
-# This is what a monad is: an interface, that many different instances implement,
-# which provides some behavior. The following only deals with single-argument functions, but:
+#%% Imports.
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
-
-#
-# Curry.
-#
-
-# But... what if we want to log the status of that send_message call?
+from toolz.curried import do
 from toolz.functoolz import curry
 
+#%% Setup.
 
 @dataclass
 class User:
@@ -33,7 +27,6 @@ class Database:
         "user1": User("Alan", "alan@mail.com"),
         "user2": User("Sue", "sue@mail.com"),
     }
-
 
 @dataclass
 class Email:
@@ -48,8 +41,9 @@ class Email:
         self.sent = True if not self.sent else False
         return True if self.sent else False
 
+#%% Dons' explanation will be better/more rigorous than mine, but in a more familiar syntax (Python),
 
-# Dons' explanation will be better/more rigorous than mine, but in a more familiar syntax (Python), # let's say you've got some functions:
+# Let's say you've got some functions:
 
 def get_user(id):
     # returns None if no such user exists
@@ -62,7 +56,7 @@ def send_message1(user, message):
     Email(user.email, message).send()
 
 def log(message):
-    print(message)
+    print(f"LOG: {datetime.now()}: {message}")
 
 
 def main1():
@@ -73,9 +67,11 @@ def main1():
 
 def test_main1():
     main1()
+    # Message sent.
 
 
-# So, we add a None check:
+#%% So, we add a None check:
+
 def main2():
     user = get_user("unknown_user")
     if user != None:
@@ -84,30 +80,41 @@ def main2():
 
 def test_main2():
     main2()
+    # Was the message sent? I don't know.
 
+
+#%% But... what if we want to log the status of that send_message call?
+
+# NOTE: Making use of `curry` to make `send_message2` compatible with `NoneMonad` later on.
 
 @curry
-def send_message2(user, msg):
+def send_message2(user, msg):  # TODO: def may_throw(arg, func):
     try:
-        Email(user.email, msg).send()
-        return None
+        send_message1(user, msg)
+        return None  # TODO: return "Message sent." ?
     except Exception as e:
         return f"Failed to send message; {e}"
 
-
-# (Note that this is a contrived example, please don't critique the general dumbness ;)).
 # Now...
+
 def main3():
-    user = get_user(1)
+    user = get_user("user1")
     if user != None:
         response = send_message2(user, f"Hello {user}")
         if response != None:
-            log(response)
-    log(f"Was the user found? Was the message sent? I don't know.")
+            log(response)  # Does not get called!
+    log(f"Was the user found? user = {user}")
+    log(f"Was the message sent? response = {response}")
 
 def test_main3():
     main3()
+    # Was the user found? user = User(name='Alan', email='alan@mail.com')
+    # Was the message sent? response = None
 
+#%% As you can see, it's getting a bit hairy.
+# But, what if we had a class that dealt with the Nones for us?
+# This is what a monad is: an interface, that many different instances implement,
+# which provides some behavior. The following only deals with single-argument functions, but:
 
 @dataclass
 class NoneMonad:
@@ -120,19 +127,24 @@ class NoneMonad:
         else:
             return NoneMonad(None)
 
+# Now, we...
 
-# Now, we...
 def main4(user_id):
     return (NoneMonad(user_id)
                 .bind(get_user)
-                .bind(send_message2(msg="Hello user."))
+                .bind(do(send_message2(msg="Hello user.")))
                 .bind(log))
 
-def test_main4():
-    main4(1)
+def test_main4_unknown_user():
+    main4('unknown_user')
+    # NoneMonad(arg=None)
+
 
 def test_main4_user1():
     main4('user1')
+    # User(name='Alan', email='alan@mail.com')
+
+    print(f"type(t) = {main4('user1')}.")
 
 # And, boom, the Nones are handled. Real, non-contrived Monads do more (and implement other behaviours -- like in dons' example, the Either response, or the Maybe monad, etc.), but hopefully this demonstrates the strength. Haskell's typically used as the example language, because there's syntax sugar in Haskell for making dealing with Monads prettier :).
 
@@ -141,8 +153,10 @@ def test_main4_user1():
 # Please forgive any blinding mistakes I've made in my code.
 
 
+#%% Try using `curry`
+
 @curry
-def send_message3(user, msg, email=True):
+def send_message_curry(user, msg, email=True):
     try:
         print(f"Sending {'email' if email else 'letter'} to {user} which says {msg}")
         return None
@@ -150,12 +164,9 @@ def send_message3(user, msg, email=True):
         return f"Failed to send message; {e}"
 
 
-def main5():
-    send_email = send_message3(msg="Hi there!", email=False)
+def test_main5():
+    send_email = send_message_curry(msg="Hi there!", email=False)
     send_email(user="Steve")
 
-    message_steve = send_message3("Steve")
+    message_steve = send_message_curry("Steve")
     message_steve(msg="Goodbye!")
-
-def test_main5():
-    main5()
