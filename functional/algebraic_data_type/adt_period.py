@@ -3,7 +3,7 @@
     `Period` example from `Stupid Python Ideas`
 
     The code below is based on the last comment post:
-    http://stupidpythonideas.blogspot.co.uk/2014/08/adts-for-python.html 
+    http://stupidpythonideas.blogspot.co.uk/2014/08/adts-for-python.html
 
     Kris Nuttycombe (17 August, 2016 15:36)
     ``I know it's ugly as hell, but I get by by encoding my sum type values in terms of their catamorphism.
@@ -33,9 +33,9 @@ def date_period(end_date, start_date):
 def print_period(period):  # period -> match_period
     return period(
         if_duration = lambda start_date, duration:
-            "  start_date: {0}\n  duration: {1}".format(str(start_date), str(duration)), 
+            f"  start_date: {str(start_date)}\n  duration: {str(duration)}",
         if_date = lambda start_date, end_date:
-            "  start_date: {0}\n  end_date: {1}".format(str(start_date), str(end_date)))
+            f"  start_date: {str(start_date)}\n  end_date: {str(end_date)}")
 
 # type Tenor = Days | Months | Years
 
@@ -51,9 +51,9 @@ end = date(2017, 8, 28)
 duration = "1M"
 
 print("print_period...")
-print("date_period:\n{}".format(print_period(date_period(start, end))))
-print("duration_period:\n{}".format(print_period(duration_period(start, duration))))
+print(f"date_period:\n {print_period(date_period(start, end))}")
+print(f"duration_period:\n {print_period(duration_period(start, duration))}")
 
 print("calc_period...")
-print("date_period:\n  {}".format(calc_period(date_period(start, end))))
-print("duration_period:\n {}".format(calc_period(duration_period(start, duration))))
+print(f"date_period:\n  {calc_period(date_period(start, end))}")
+print(f"duration_period:\n {calc_period(duration_period(start, duration))}")
