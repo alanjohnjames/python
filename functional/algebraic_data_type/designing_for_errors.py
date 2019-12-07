@@ -75,7 +75,7 @@ def unhandled_type(x) -> str:
     # https://github.com/python/mypy/issues/5818
     # This function (stolen mostly verbatim from TypeScript
     # https://www.typescriptlang.org/docs/handbook/advanced-types.html#exhaustiveness-checking):
-    return f"Unhandled type: `{type(x).__name__}`"
+    return lambda x: "Unhandled type: `{type(x).__name__}`"
 
 
 def error_message(err: Error.types, default_handler: Callable = unhandled_type) -> Callable:
@@ -84,15 +84,18 @@ def error_message(err: Error.types, default_handler: Callable = unhandled_type) 
         isinstance(err, Error.NAME_MUST_NOT_BE_BLANK): lambda: "Name must not be blank",
         isinstance(err, Error.EMAIL_MUST_NOT_BE_BLANK): lambda: "Email must not be blank",
         isinstance(err, Error.EMAIL_NOT_VALID): lambda: f"Email `{err.email}` is not valid."
-    }.get(True, default_handler)
+    }.get(True, default_handler(err))
+
+error_message(Error.EMAIL_MUST_NOT_BE_BLANK())
 
 
-# %%
+    # %%
 
 errors = [
     Error.NAME_MUST_NOT_BE_BLANK(),
     Error.EMAIL_MUST_NOT_BE_BLANK(),
     Error.EMAIL_NOT_VALID(EmailAddress('name@email.com')),
+    RuntimeError("Exceptions are not supported!")
 ]
 
 messages = list(map(error_message, errors))
