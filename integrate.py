@@ -18,7 +18,9 @@ def index(val, arr):
 
 print("index = {}".format(str(index(x, 0.75))))
 
-x_int = []
+x_int: list = []
 
 print("Finished...")
 
+
+# %%
